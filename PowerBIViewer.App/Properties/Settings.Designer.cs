@@ -82,5 +82,16 @@ namespace PowerBIViewer.App.Properties {
                 this["WindowState"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection FavoriteReportKeys {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["FavoriteReportKeys"]));
+            }
+            set {
+                this["FavoriteReportKeys"] = value;
+            }
+        }
     }
 }
