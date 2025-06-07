@@ -1,0 +1,17 @@
+[
+  {
+    "Title": "KPI Widget",
+    "Icon": "📈",
+    "Url": "https://app.powerbi.com/view?r=eyJrIjoiZDFmMWEwYzgtMjAyYi00OGVhLWFhMzktMDlmM2YzNWIxZmYyIiwidCI6IjUwMjQ2NTExLTdjNDQtNDAzNi04YjQxLTJiNjlhMWUwZjI4YiIsImMiOjl9"
+  },
+  {
+    "Title": "Rapport Explorer",
+    "Icon": "🗂️",
+    "Url": "https://app.powerbi.com/view?r=eyJrIjoiZDVjZDhmNWItYWNmOS00ZDAwLWExYjgtYmMwZmVlMzY0MmI5IiwidCI6IjUwMjQ2NTExLTdjNDQtNDAzNi04YjQxLTJiNjlhMWUwZjI4YiIsImMiOjl9"
+  },
+  {
+    "Title": "Real-time Monitor",
+    "Icon": "⏱️",
+    "Url": "https://app.powerbi.com/reportEmbed?reportId=2a493c4a-5ccc-4828-bc6c-f4625a1b11bd&autoAuth=true&ctid=a300b38b-6acb-43db-b02a-af94b4300d87"
+  }
+]

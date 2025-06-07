@@ -1,0 +1,49 @@
+# ===================================================================
+# Standaard .gitignore voor Visual Studio / .NET Core / .NET 5+
+# ===================================================================
+
+# Bestanden gegenereerd door de gebruiker in de IDE
+# -------------------------------------------------------------------
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build output
+# -------------------------------------------------------------------
+[Bb]in/
+[Oo]bj/
+[Pp]ublish/
+
+# Visual Studio-specifieke mappen en bestanden
+# -------------------------------------------------------------------
+.vs/
+*.njsproj
+*.sln.ide
+.idea/
+
+# NuGet-gerelateerde bestanden
+# -------------------------------------------------------------------
+# Negeer de oude 'packages' map stijl
+[Pp]ackages/
+# Negeer lokaal gegenereerde NuGet-pakketten
+*.nupkg
+
+# Test-gerelateerde bestanden
+# -------------------------------------------------------------------
+TestResults/
+*.VSTest
+*.trx
+
+# Overig
+# -------------------------------------------------------------------
+# Windows thumbnail cache
+Thumbs.db
+# Mac-specifieke bestanden
+.DS_Store
+
+# ReSharper-specifieke bestanden
+# -------------------------------------------------------------------
+_ReSharper.*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user

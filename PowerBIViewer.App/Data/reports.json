@@ -1,0 +1,26 @@
+[
+  {
+    "Name": "Sales Dashboard",
+    "Key": "sales",
+    "Emoji": "📊",
+    "Url": "https://app.powerbi.com/reportEmbed?reportId=0bc17f97-c5a3-4e6c-9ed1-a4c533c92c7c&autoAuth=true&ctid=a300b38b-6acb-43db-b02a-af94b4300d87&actionBarEnabled=true"
+  },
+  {
+    "Name": "Finance",
+    "Key": "finance",
+    "Emoji": "💰",
+    "Url": "https://app.powerbi.com/view?r=eyJrIjoiZDVjZDhmNWIt..."
+  },
+  {
+    "Name": "HR",
+    "Key": "hr",
+    "Emoji": "🧑‍💼",
+    "Url": "https://app.powerbi.com/view?r=eyJrIjoiZDFmMWEwYzgt..."
+  },
+  {
+    "Name": "Sundara Imports",
+    "Key": "crm",
+    "Emoji": "🌍",
+    "Url": "https://app.powerbi.com/reportEmbed?reportId=2a493c4a-..."
+  }
+]

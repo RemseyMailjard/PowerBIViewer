@@ -1,0 +1,61 @@
+﻿<Window x:Class="PowerBIViewer.App.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="Power BI Viewer - Remsey Mailjard"
+        Icon="/Assets/app_icon.ico"
+        Height="700"
+        Width="1100"
+        Background="{DynamicResource AppBackgroundBrush}"
+        Foreground="{DynamicResource AppForegroundBrush}">
+
+    <!-- ✅ Vereenvoudigd: Window.Resources is niet nodig. 
+         De themabestanden worden via App.xaml geladen, en de designer zou die ook moeten kunnen oppikken. 
+         Dit voorkomt conflicten en houdt de XAML van het venster schoon. -->
+
+    <!-- Het DockPanel erft automatisch de achtergrondkleur van het Window, dus de 'Background' property is hier niet nodig. -->
+    <DockPanel>
+
+        <!-- ░░ Bovenbalk: Dashboardselectie ░░ -->
+        <!-- Ook hier is de 'Background' property overbodig. -->
+        <StackPanel x:Name="DashboardButtonPanel"
+                    DockPanel.Dock="Top"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Left"
+                    Margin="5" />
+
+        <!-- ░░ Onderbalk: Actieknoppen ░░ -->
+        <!-- ✨ NIEUW: Een Border voegt een subtiele scheidingslijn toe tussen de acties en de hoofdinhoud. -->
+        <Border DockPanel.Dock="Bottom"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,1,0,0">
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="5">
+
+                <!-- ❗ GEWIJZIGD: Alle stijlen zijn nu DynamicResource. 
+                     Dit is CRUCIAAL om de knoppen van stijl te laten veranderen wanneer het thema wisselt. -->
+
+                <Button Style="{DynamicResource SecondaryButton}"
+                        Content="🌓 Toggle Theme"
+                        Click="ToggleTheme_Click"/>
+                <Button Style="{DynamicResource SecondaryButton}"
+                        Content="🔄 Refresh"
+                        Click="Refresh_Click"/>
+                <Button Style="{DynamicResource SecondaryButton}"
+                        Content="📸 Screenshot"
+                        Click="Screenshot_Click"/>
+                <Button Style="{DynamicResource SecondaryButton}"
+                        Content="⚙️ Instellingen"
+                        Click="OpenSettings_Click"/>
+                <Button Style="{DynamicResource PrimaryButton}"
+                        Content="🧩 Widget Launcher"
+                        Click="OpenWidgetLauncher_Click"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ░░ Midden: Power BI WebView ░░ -->
+        <wv2:WebView2 x:Name="PowerBIWebView"/>
+    </DockPanel>
+</Window>

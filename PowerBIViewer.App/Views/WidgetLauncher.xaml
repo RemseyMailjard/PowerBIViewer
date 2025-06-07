@@ -1,0 +1,31 @@
+﻿<Window x:Class="PowerBIViewerApp.WidgetLauncher"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Widget Launcher" Height="480" Width="500">
+    <Grid Margin="10">
+        <StackPanel>
+
+            <TextBlock Text="📦 Kies een widget uit de lijst"
+                       FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+
+            <ListBox x:Name="WidgetListBox"
+                     Height="200"
+                     BorderBrush="#DDD"
+                     BorderThickness="1"
+                     SelectionChanged="WidgetListBox_SelectionChanged"
+                     MouseDoubleClick="WidgetListBox_MouseDoubleClick"
+                     ItemTemplate="{StaticResource WidgetListItemTemplate}"
+                     ItemContainerStyle="{StaticResource WidgetListItemContainerStyle}" />
+
+            <TextBlock Text="🔗 Of voer hier een aangepaste widget-URL in:"
+                       Margin="0,15,0,4"/>
+
+            <TextBox x:Name="CustomWidgetUrlTextBox"
+                     Height="25" Margin="0,0,0,10"/>
+
+            <Button Content="Open Geselecteerde of Ingevoerde Widget"
+                    Click="OpenSelectedWidget_Click"
+                    Height="35"/>
+        </StackPanel>
+    </Grid>
+</Window>
