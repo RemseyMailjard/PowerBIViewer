@@ -2,12 +2,12 @@
   {
     "Title": "KPI Widget",
     "Icon": "📈",
-    "Url": "https://app.powerbi.com/view?r=eyJrIjoiZDFmMWEwYzgtMjAyYi00OGVhLWFhMzktMDlmM2YzNWIxZmYyIiwidCI6IjUwMjQ2NTExLTdjNDQtNDAzNi04YjQxLTJiNjlhMWUwZjI4YiIsImMiOjl9"
+    "Url": "https://app.powerbi.com/reportEmbed?reportId=0bc17f97-c5a3-4e6c-9ed1-a4c533c92c7c&autoAuth=true&ctid=a300b38b-6acb-43db-b02a-af94b4300d87&navContentPaneEnabled=false&filterPaneEnabled=false&pageNavigationPaneEnabled=false&actionBarEnabled=false&chromeless=1"
   },
   {
-    "Title": "Rapport Explorer",
+    "Title": "Sales Performance Demo Report",
     "Icon": "🗂️",
-    "Url": "https://app.powerbi.com/view?r=eyJrIjoiZDVjZDhmNWItYWNmOS00ZDAwLWExYjgtYmMwZmVlMzY0MmI5IiwidCI6IjUwMjQ2NTExLTdjNDQtNDAzNi04YjQxLTJiNjlhMWUwZjI4YiIsImMiOjl9"
+    "Url": "https://app.fabric.microsoft.com/view?r=eyJrIjoiOGY5MDFjMmYtMjE1ZS00ZTQwLWI4MDgtZDc1NTY0Njc1MjE1IiwidCI6IjA5M2U1OTk2LTk2YmYtNGYyYS1hZGE3LWQ5MjdmZGFlMGYyNSIsImMiOjZ9&pageName=f636c10593b10bb7379e&navContentPaneEnabled=false&filterPaneEnabled=false&pageNavigationPaneEnabled=false"
   },
   {
     "Title": "Real-time Monitor",
