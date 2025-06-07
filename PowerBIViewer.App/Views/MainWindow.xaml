@@ -15,10 +15,31 @@
         Background="{DynamicResource AppBackgroundBrush}"
         Foreground="{DynamicResource AppForegroundBrush}">
 
+    <Window.Resources>
+        <Style x:Key="DashboardButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Value="True">
+                            <Condition.Binding>
+                                <MultiBinding Converter="{StaticResource EqualityConverter}">
+                                    <Binding Path="DataContext.SelectedReportKey" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                    <Binding Path="Key" />
+                                </MultiBinding>
+                            </Condition.Binding>
+                        </Condition>
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="{DynamicResource PrimaryButtonBackgroundBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonForegroundBrush}"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <DockPanel>
         <!-- Bovenbalk: Vaste knoppen en dynamische rapportknoppen -->
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5,5,5,0">
-            <!-- Vaste knoppen -->
             <Button Style="{DynamicResource SecondaryButton}" 
                     Content="🏆 Power BI Community" 
                     ToolTip="Bekijk dashboards uit de Power BI Data Stories Gallery" 
@@ -28,7 +49,6 @@
                     ToolTip="Verken portfolio's en dashboards op NovyPro" 
                     Command="{Binding LoadNovyProCommand}"/>
 
-            <!-- Dynamische rapportknoppen via ItemsControl -->
             <ItemsControl ItemsSource="{Binding Reports}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -37,7 +57,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Style="{DynamicResource SecondaryButton}"
+                        <Button Style="{StaticResource DashboardButton}"
                                 Command="{Binding DataContext.LoadReportCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                 CommandParameter="{Binding Key}">
                             <TextBlock>
@@ -49,7 +69,7 @@
             </ItemsControl>
         </StackPanel>
 
-        <!-- Statusbalk onderaan -->
+        <!-- Statusbalk -->
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBarItem>
                 <TextBlock Text="{Binding StatusText}" Margin="4,0,0,0"/>
@@ -67,14 +87,17 @@
                         Command="{Binding ToggleThemeCommand}"/>
                 <Button Style="{DynamicResource SecondaryButton}" Content="🔄 Refresh" Click="Refresh_Click"/>
                 <Button x:Name="FullScreenButton" Style="{DynamicResource SecondaryButton}" Content="⛶" ToolTip="Volledig scherm (F11)" Click="ToggleFullScreen_Click"/>
+
+                <!-- ✨ GECORRIGEERD: Syntaxfout in de binding gecorrigeerd -->
                 <Button Style="{DynamicResource SecondaryButton}" Content="📸 Screenshot" Command="{Binding ScreenshotCommand}"/>
+
                 <Button Style="{DynamicResource SecondaryButton}" Content="⚙️ Instellingen" Command="{Binding OpenSettingsCommand}"/>
                 <Button Style="{DynamicResource SecondaryButton}" Content="ℹ️ Over" Command="{Binding AboutCommand}"/>
                 <Button Style="{DynamicResource PrimaryButton}" Content="🧩 Widget Launcher" Command="{Binding OpenWidgetLauncherCommand}"/>
             </StackPanel>
         </Border>
 
-        <!-- Midden: Laad-indicator en WebView -->
+        <!-- Hoofdinhoud -->
         <Grid>
             <wv2:WebView2 x:Name="PowerBIWebView"/>
             <Border Background="#80000000" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">

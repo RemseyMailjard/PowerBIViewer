@@ -23,6 +23,7 @@ namespace PowerBIViewer.App.Views
             // 1. Maak de ViewModel aan en stel deze in als DataContext
             _viewModel = new MainViewModel();
             this.DataContext = _viewModel;
+            _viewModel.ScreenshotRequested += OnScreenshotRequested;
 
             // Luister naar property changes op de ViewModel
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -51,6 +52,33 @@ namespace PowerBIViewer.App.Views
             }
         }
 
+        private async void OnScreenshotRequested(object? sender, EventArgs e)
+        {
+            var saveDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = $"Screenshot-{DateTime.Now:yyyyMMdd-HHmmss}.png",
+                Filter = "PNG Image|*.png"
+            };
+
+            if (saveDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    using (var stream = System.IO.File.Create(saveDialog.FileName))
+                    {
+                        // Zorg dat de WebView2 control is geïnitialiseerd
+                        await PowerBIWebView.EnsureCoreWebView2Async();
+                        await PowerBIWebView.CoreWebView2.CapturePreviewAsync(
+                            Microsoft.Web.WebView2.Core.CoreWebView2CapturePreviewImageFormat.Png, stream);
+                    }
+                    MessageBox.Show($"Screenshot opgeslagen in:\n{saveDialog.FileName}", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Kon geen screenshot maken:\n{ex.Message}", "Fout", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
         private void ApplyTheme(bool isDarkMode)
         {
             DwmApiHelper.SetTitleBarTheme(this, isDarkMode);
@@ -158,5 +186,6 @@ namespace PowerBIViewer.App.Views
                 FullScreenButton.ToolTip = "Verlaat volledig scherm (F11)";
             }
         }
+
     }
 }
