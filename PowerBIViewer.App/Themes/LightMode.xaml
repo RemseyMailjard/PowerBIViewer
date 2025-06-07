@@ -82,6 +82,13 @@
         </Style.Triggers>
     </Style>
 
+    <Style TargetType="StatusBar">
+        <!-- We gebruiken de standaard achtergrond- en voorgrondkleuren van het thema. -->
+        <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource AppForegroundBrush}"/>
+    </Style>
+    
+    
     <!-- (De rest van het bestand was al correct) -->
     <Style x:Key="WidgetListItemContainerStyle" TargetType="ListBoxItem">
         <Setter Property="Padding" Value="6" />

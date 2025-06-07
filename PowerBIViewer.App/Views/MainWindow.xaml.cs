@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using PowerBIViewer.App.Helpers;
 
 // Namespace moet overeenkomen met x:Class in je XAML.
 namespace PowerBIViewer.App.Views
@@ -19,7 +20,7 @@ namespace PowerBIViewer.App.Views
         public MainWindow()
         {
             InitializeComponent();
-
+            DwmApiHelper.SetTitleBarTheme(this, isDarkMode);
             // Koppel alle events
             PowerBIWebView.NavigationStarting += PowerBIWebView_NavigationStarting;
             PowerBIWebView.NavigationCompleted += PowerBIWebView_NavigationCompleted;
@@ -200,6 +201,7 @@ namespace PowerBIViewer.App.Views
                 // 1. Wissel de status
                 isDarkMode = !isDarkMode;
 
+                DwmApiHelper.SetTitleBarTheme(this, isDarkMode);
                 // 2. Laad de nieuwe themabestanden
                 string newThemeFileName = isDarkMode ? "Themes/DarkMode.xaml" : "Themes/LightMode.xaml";
                 Uri newThemeUri = new Uri(newThemeFileName, UriKind.Relative);
