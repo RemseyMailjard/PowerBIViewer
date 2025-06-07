@@ -7,9 +7,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\app_icon.ico</ApplicationIcon>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\linkedin.png" />
     <None Remove="Data\reports.json" />
     <None Remove="Data\widgets.json" />
   </ItemGroup>
@@ -20,6 +22,7 @@
 
   <ItemGroup>
     <Resource Include="Assets\app_icon.ico" />
+    <Resource Include="Assets\linkedin.png" />
     <Resource Include="Themes\DarkMode.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

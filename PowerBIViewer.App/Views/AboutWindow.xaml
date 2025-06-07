@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Over Power BI Viewer" 
-        Height="350" Width="450"
+        Height="390" Width="450"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         Background="{DynamicResource AppBackgroundBrush}"
@@ -13,6 +13,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -29,15 +30,27 @@
         </TextBlock>
 
         <TextBlock Grid.Row="3" Margin="0,0,0,5">
-            <Run>Gemaakt door Remsey Mailjard. Bekijk het project op</Run>
-            <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/remseymailjard/remseymailjard-powerbiviewer">
+            <Run>Gemaakt door Remsey Mailjard. Bekijk het project op </Run>
+            <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/remseymailjard/powerbiviewer">
                 <Run Text="GitHub"/>
             </Hyperlink><Run>.</Run>
         </TextBlock>
 
-        <TextBlock x:Name="CopyrightTextBlock" Grid.Row="4" Style="{DynamicResource SubtleText}" Text="© 2024 Remsey Mailjard. All rights reserved." Margin="0,15,0,0"/>
+        <!-- 🔗 LinkedIn met logo -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,5">
+            <Image Source="pack://application:,,,/Assets/linkedin.png" Width="16" Height="16" Margin="0,0,6,0"/>
+            <TextBlock VerticalAlignment="Center">
+                <Run>Volg Remsey op </Run>
+                <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://www.linkedin.com/in/remseymailjard">
+                    <Run Text="LinkedIn"/>
+                </Hyperlink><Run>.</Run>
+            </TextBlock>
+        </StackPanel>
 
-        <Button Grid.Row="5" Content="OK" Style="{DynamicResource PrimaryButton}" HorizontalAlignment="Right" 
+        <TextBlock x:Name="CopyrightTextBlock" Grid.Row="5" Style="{DynamicResource SubtleText}"
+                   Text="© 2025 Remsey Mailjard. All rights reserved." Margin="2,14,-2,53" Grid.RowSpan="2"/>
+
+        <Button Grid.Row="6" Content="OK" Style="{DynamicResource PrimaryButton}" HorizontalAlignment="Right" 
                 Width="80" Margin="0,20,0,0" IsDefault="True" IsCancel="True" Click="OkButton_Click"/>
     </Grid>
 </Window>
