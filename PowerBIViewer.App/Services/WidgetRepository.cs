@@ -7,7 +7,7 @@ using PowerBIViewer.App.Models;
 
 namespace PowerBIViewer.App.Services
 {
-    public class WidgetRepository
+    public class WidgetRepository : IWidgetRepository
     {
         private readonly string _filePath;
 

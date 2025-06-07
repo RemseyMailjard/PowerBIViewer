@@ -1,5 +1,6 @@
 ﻿// FILE: PowerBIViewer.App/App.xaml.cs (MET DESIGNER-CHECK)
 using Microsoft.Extensions.DependencyInjection;
+using PowerBIViewer.App.Services;
 using PowerBIViewer.App.ViewModels;
 using PowerBIViewer.App.Views;
 using System;
@@ -28,12 +29,26 @@ namespace PowerBIViewer.App
             ServiceProvider = services.BuildServiceProvider();
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        // In App.xaml.cs -> ConfigureServices
+        private static void ConfigureServices(IServiceCollection services)
         {
-            // Deze methode blijft ongewijzigd
+            // === SERVICES ===
             services.AddSingleton<IReportRepository, ReportRepository>();
+            // ✨ NIEUW: Registreer de WidgetRepository. We geven de factory-methode mee
+            // omdat de constructor een parameter (het bestandspad) nodig heeft.
+            services.AddSingleton<IWidgetRepository>(provider =>
+                new WidgetRepository("Data/widgets.json"));
+
+            // === VIEWMODELS ===
             services.AddTransient<MainViewModel>();
+            // ✨ NIEUW: Registreer de SettingsViewModel
+            services.AddTransient<SettingsViewModel>();
+
+            // === VIEWS ===
             services.AddSingleton<MainWindow>();
+            // ✨ NIEUW: Registreer het SettingsWindow. Transient is goed, zodat je eventueel
+            // een 'schoon' venster kunt openen als je dat later wilt.
+            services.AddTransient<SettingsWindow>();
         }
 
         protected override void OnStartup(StartupEventArgs e)

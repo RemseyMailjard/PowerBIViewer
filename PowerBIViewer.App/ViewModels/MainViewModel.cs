@@ -1,5 +1,7 @@
 ﻿// FILE: PowerBIViewer.App/ViewModels/MainViewModel.cs
+using Microsoft.Extensions.DependencyInjection; // ✨ TOEGEVOEGD
 using PowerBIViewer.App.Commands;
+using PowerBIViewer.App.Services;
 using PowerBIViewer.App.Views;
 using PowerBIViewerApp;
 using System;
@@ -12,7 +14,6 @@ namespace PowerBIViewer.App.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        // ✨ GEWIJZIGD: Nullable gemaakt (? toegevoegd) om de designer-constructor te ondersteunen.
         private readonly IReportRepository? _reportRepository;
 
         // --- Event en Private Fields ---
@@ -44,14 +45,10 @@ namespace PowerBIViewer.App.ViewModels
         public ICommand ScreenshotCommand { get; }
         public ICommand OpenSettingsCommand { get; }
 
-        // ✨ NIEUW: Een parameterloze constructor specifiek voor de XAML Designer.
-        // Deze wordt aangeroepen door `d:DesignInstance IsDesignTimeCreatable=True` in de XAML.
+        // Constructor voor de XAML Designer
         public MainViewModel()
         {
-            // Initialiseer de collectie als leeg om null-reference exceptions in de designer te voorkomen.
             Reports = new ObservableCollection<ReportDefinition>();
-
-            // Initialiseer de commands met lege acties om crashes te voorkomen.
             LoadReportCommand = new RelayCommand(p => { });
             LoadCommunityCommand = new RelayCommand(p => { });
             LoadNovyProCommand = new RelayCommand(p => { });
@@ -63,14 +60,12 @@ namespace PowerBIViewer.App.ViewModels
             OpenSettingsCommand = new RelayCommand(p => { });
         }
 
-        // ✨ De "echte" constructor die door de Dependency Injection container wordt gebruikt.
+        // De "echte" constructor die door DI wordt gebruikt.
         public MainViewModel(IReportRepository reportRepository)
         {
             _reportRepository = reportRepository;
-
             Reports = new ObservableCollection<ReportDefinition>(_reportRepository.GetAll() ?? Enumerable.Empty<ReportDefinition>());
 
-            // Initialiseer de commands met de daadwerkelijke logica.
             LoadReportCommand = new RelayCommand(ExecuteLoadReport);
             LoadCommunityCommand = new RelayCommand(ExecuteLoadCommunity);
             LoadNovyProCommand = new RelayCommand(ExecuteLoadNovyPro);
@@ -79,7 +74,9 @@ namespace PowerBIViewer.App.ViewModels
             OpenWidgetLauncherCommand = new RelayCommand(ExecuteOpenWidgetLauncher);
             AboutCommand = new RelayCommand(ExecuteShowAbout);
             ScreenshotCommand = new RelayCommand(p => ScreenshotRequested?.Invoke(this, EventArgs.Empty));
-            OpenSettingsCommand = new RelayCommand(p => MessageBox.Show("Instellingenvenster wordt later toegevoegd."));
+
+            // ✨ GEWIJZIGD: De command is nu gekoppeld aan de juiste methode.
+            OpenSettingsCommand = new RelayCommand(ExecuteOpenSettings);
 
             if (Reports.Any())
             {
@@ -87,12 +84,36 @@ namespace PowerBIViewer.App.ViewModels
             }
         }
 
-        // --- Execute Methods (gebruiken nu de _reportRepository instance) ---
+        // ✨ NIEUWE METHODE: De logica voor het openen van het instellingenvenster.
+        private void ExecuteOpenSettings(object? p)
+        {
+            // Vraag een SettingsWindow aan de DI container.
+            // Dit werkt omdat we de ServiceProvider static hebben gemaakt in App.xaml.cs.
+            var settingsWindow = App.ServiceProvider?.GetService<SettingsWindow>();
+            if (settingsWindow != null)
+            {
+                // Stel de eigenaar in zodat het instellingenvenster boven het hoofdvenster verschijnt.
+                settingsWindow.Owner = Application.Current.MainWindow;
+                // ShowDialog() opent het venster modaal, wat betekent dat de gebruiker
+                // eerst dit venster moet sluiten voordat hij terug kan naar het hoofdvenster.
+                settingsWindow.ShowDialog();
+
+                // Na het sluiten van het instellingenvenster (nadat er mogelijk op 'Opslaan' is geklikt),
+                // laden we de rapporten opnieuw om eventuele wijzigingen in de UI te tonen.
+                var freshReports = _reportRepository!.GetAll();
+                Reports.Clear();
+                foreach (var report in freshReports)
+                {
+                    Reports.Add(report);
+                }
+            }
+        }
+
+        // --- Bestaande Execute Methods ---
         private void ExecuteLoadReport(object? parameter)
         {
             IsLoading = true;
             var key = parameter as string;
-            // De null-forgiving operator (!) is hier veilig omdat deze methode alleen wordt aangeroepen vanuit de DI-constructor.
             var report = _reportRepository!.GetByKey(key ?? string.Empty);
             if (report != null)
             {
@@ -102,7 +123,6 @@ namespace PowerBIViewer.App.ViewModels
             }
         }
 
-        // ... de rest van de methodes blijft hetzelfde ...
         private void ExecuteLoadCommunity(object? parameter)
         {
             IsLoading = true;
