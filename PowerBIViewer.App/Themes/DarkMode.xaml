@@ -8,6 +8,7 @@
     <Color x:Key="ButtonBackgroundColor">#2D2D2D</Color>
     <Color x:Key="ButtonHoverColor">#3E3E3E</Color>
     <Color x:Key="BorderColor">#4A4A4A</Color>
+    <Color x:Key="GreenHoverColor">#117865</Color>
 
     <Color x:Key="PrimaryButtonBackgroundColor">#0078D7</Color>
     <Color x:Key="PrimaryButtonForegroundColor">#FFFFFF</Color>
@@ -36,6 +37,7 @@
     <!-- GECORRIGEERD 1: De Brush verwijst nu correct naar de Color-resource -->
     <SolidColorBrush x:Key="SecondaryButtonForegroundBrush" Color="{StaticResource SecondaryButtonForegroundColor}" />
     <SolidColorBrush x:Key="SecondaryButtonHoverBrush" Color="{StaticResource SecondaryButtonHoverColor}" />
+    <SolidColorBrush x:Key="GreenHoverBrush" Color="{StaticResource GreenHoverColor}" />
 
     <SolidColorBrush x:Key="ListItemHoverBrush" Color="{StaticResource ListItemHoverColor}" />
     <SolidColorBrush x:Key="ListItemSelectedBrush" Color="{StaticResource ListItemSelectedColor}" />
@@ -52,7 +54,8 @@
         <Setter Property="BorderThickness" Value="1"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{DynamicResource ButtonHoverBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource GreenHoverBrush}"/>
+
             </Trigger>
         </Style.Triggers>
     </Style>
