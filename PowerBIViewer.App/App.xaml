@@ -2,25 +2,17 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PowerBIViewer.App"
-             StartupUri="Views/MainWindow.xaml">
+             xmlns:converters="clr-namespace:PowerBIViewer.App.Converters">
     <Application.Resources>
-        <!-- 
-        Dit is de centrale opslagplaats voor alle resources die in de hele applicatie beschikbaar zijn.
-        We gebruiken MergedDictionaries om onze stijlen in aparte bestanden te organiseren,
-        wat de applicatie overzichtelijk en schaalbaar maakt.
-        -->
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!-- 
-                HIER LADEN WE HET STANDAARDTHEMA BIJ OPSTARTEN.
-                Het is een goede gewoonte om een van de thema's (bijv. Light Mode) hier te definiëren.
-                De Toggle-knop zal dit bestand in de code-behind vervangen door het andere themabestand.
-                
-                AANBEVELING: Hernoem je themabestanden naar "LightMode.xaml" en "DarkMode.xaml"
-                voor maximale duidelijkheid. Ik ga hier uit van die nieuwe naam.
-                -->
+                <!-- Dit laadt het standaardthema bij opstarten -->
                 <ResourceDictionary Source="Themes/LightMode.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- De converter die nodig is voor MVVM-bindings -->
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
