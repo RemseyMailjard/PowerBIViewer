@@ -12,10 +12,11 @@ namespace PowerBIViewer.App.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        // Event voor View-interactie
-        public event EventHandler? ScreenshotRequested;
+        // ✨ GEWIJZIGD: Nullable gemaakt (? toegevoegd) om de designer-constructor te ondersteunen.
+        private readonly IReportRepository? _reportRepository;
 
-        // --- Private Fields ---
+        // --- Event en Private Fields ---
+        public event EventHandler? ScreenshotRequested;
         private bool _isDarkMode;
         private string _statusText = "Klaar";
         private string? _selectedReportUrl;
@@ -23,7 +24,7 @@ namespace PowerBIViewer.App.ViewModels
         private string? _selectedReportKey;
 
         // --- Public Properties ---
-        public ObservableCollection<ReportDefinition> Reports { get; }
+        public ObservableCollection<ReportDefinition> Reports { get; private set; }
         public string StatusText { get => _statusText; set { _statusText = value; OnPropertyChanged(); } }
         public string? SelectedReportUrl { get => _selectedReportUrl; set { _selectedReportUrl = value; OnPropertyChanged(); } }
         public bool IsLoading { get => _isLoading; set { _isLoading = value; OnPropertyChanged(); } }
@@ -43,11 +44,33 @@ namespace PowerBIViewer.App.ViewModels
         public ICommand ScreenshotCommand { get; }
         public ICommand OpenSettingsCommand { get; }
 
+        // ✨ NIEUW: Een parameterloze constructor specifiek voor de XAML Designer.
+        // Deze wordt aangeroepen door `d:DesignInstance IsDesignTimeCreatable=True` in de XAML.
         public MainViewModel()
         {
-            Reports = new ObservableCollection<ReportDefinition>(ReportRepository.GetAll());
+            // Initialiseer de collectie als leeg om null-reference exceptions in de designer te voorkomen.
+            Reports = new ObservableCollection<ReportDefinition>();
 
-            // Initialiseer alle commands
+            // Initialiseer de commands met lege acties om crashes te voorkomen.
+            LoadReportCommand = new RelayCommand(p => { });
+            LoadCommunityCommand = new RelayCommand(p => { });
+            LoadNovyProCommand = new RelayCommand(p => { });
+            ToggleThemeCommand = new RelayCommand(p => { });
+            RefreshCommand = new RelayCommand(p => { });
+            OpenWidgetLauncherCommand = new RelayCommand(p => { });
+            AboutCommand = new RelayCommand(p => { });
+            ScreenshotCommand = new RelayCommand(p => { });
+            OpenSettingsCommand = new RelayCommand(p => { });
+        }
+
+        // ✨ De "echte" constructor die door de Dependency Injection container wordt gebruikt.
+        public MainViewModel(IReportRepository reportRepository)
+        {
+            _reportRepository = reportRepository;
+
+            Reports = new ObservableCollection<ReportDefinition>(_reportRepository.GetAll() ?? Enumerable.Empty<ReportDefinition>());
+
+            // Initialiseer de commands met de daadwerkelijke logica.
             LoadReportCommand = new RelayCommand(ExecuteLoadReport);
             LoadCommunityCommand = new RelayCommand(ExecuteLoadCommunity);
             LoadNovyProCommand = new RelayCommand(ExecuteLoadNovyPro);
@@ -55,26 +78,22 @@ namespace PowerBIViewer.App.ViewModels
             RefreshCommand = new RelayCommand(p => { /* Handled in View */ });
             OpenWidgetLauncherCommand = new RelayCommand(ExecuteOpenWidgetLauncher);
             AboutCommand = new RelayCommand(ExecuteShowAbout);
-
-            // ✨ GECORRIGEERD: De ScreenshotCommand wordt nu maar één keer correct geïnitialiseerd.
             ScreenshotCommand = new RelayCommand(p => ScreenshotRequested?.Invoke(this, EventArgs.Empty));
-
-            // De tijdelijke command voor de nog niet geïmplementeerde feature.
             OpenSettingsCommand = new RelayCommand(p => MessageBox.Show("Instellingenvenster wordt later toegevoegd."));
 
-            // Laad het eerste rapport bij het opstarten
             if (Reports.Any())
             {
                 ExecuteLoadReport(Reports[0].Key);
             }
         }
 
-        // --- Execute Methods ---
+        // --- Execute Methods (gebruiken nu de _reportRepository instance) ---
         private void ExecuteLoadReport(object? parameter)
         {
             IsLoading = true;
             var key = parameter as string;
-            var report = ReportRepository.GetByKey(key ?? string.Empty);
+            // De null-forgiving operator (!) is hier veilig omdat deze methode alleen wordt aangeroepen vanuit de DI-constructor.
+            var report = _reportRepository!.GetByKey(key ?? string.Empty);
             if (report != null)
             {
                 StatusText = $"Rapport '{report.Name}' wordt geladen...";
@@ -83,6 +102,7 @@ namespace PowerBIViewer.App.ViewModels
             }
         }
 
+        // ... de rest van de methodes blijft hetzelfde ...
         private void ExecuteLoadCommunity(object? parameter)
         {
             IsLoading = true;
@@ -99,37 +119,15 @@ namespace PowerBIViewer.App.ViewModels
             SelectedReportKey = null;
         }
 
-        private void ExecuteToggleTheme(object? parameter)
-        {
-            IsDarkMode = !IsDarkMode;
-        }
-
+        private void ExecuteToggleTheme(object? parameter) { IsDarkMode = !IsDarkMode; }
         private void UpdateThemeButton()
         {
-            if (IsDarkMode)
-            {
-                ThemeButtonContent = "☀️";
-                ThemeButtonToolTip = "Wissel naar Licht thema";
-            }
-            else
-            {
-                ThemeButtonContent = "🌙";
-                ThemeButtonToolTip = "Wissel naar Donker thema";
-            }
+            if (IsDarkMode) { ThemeButtonContent = "☀️"; ThemeButtonToolTip = "Wissel naar Licht thema"; }
+            else { ThemeButtonContent = "🌙"; ThemeButtonToolTip = "Wissel naar Donker thema"; }
             OnPropertyChanged(nameof(ThemeButtonContent));
             OnPropertyChanged(nameof(ThemeButtonToolTip));
         }
-
-        private void ExecuteOpenWidgetLauncher(object? parameter)
-        {
-            var launcher = new WidgetLauncher();
-            launcher.Show();
-        }
-
-        private void ExecuteShowAbout(object? parameter)
-        {
-            var aboutWindow = new AboutWindow();
-            aboutWindow.ShowDialog();
-        }
+        private void ExecuteOpenWidgetLauncher(object? parameter) { new WidgetLauncher().Show(); }
+        private void ExecuteShowAbout(object? parameter) { new AboutWindow().ShowDialog(); }
     }
 }

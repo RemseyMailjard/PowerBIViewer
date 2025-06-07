@@ -1,4 +1,4 @@
-﻿// FILE: PowerBIViewer.App/Services/ReportRepository.cs
+﻿// FILE: Services/ReportRepository.cs
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace PowerBIViewer.App
 {
-    // Dit blijft hetzelfde
+    // De ReportDefinition class blijft ongewijzigd
     public class ReportDefinition
     {
         public string Name { get; set; }
@@ -15,29 +15,34 @@ namespace PowerBIViewer.App
         public string Emoji { get; set; }
     }
 
-    // De class is niet langer 'static'
-    public static class ReportRepository
+    // ✨ VERBETERINGEN:
+    // 1. De class is niet langer 'static'.
+    // 2. De class implementeert de 'IReportRepository' interface.
+    public class ReportRepository : IReportRepository
     {
-        private static List<ReportDefinition> _reports;
+        private readonly List<ReportDefinition> _reports;
 
-        // De static constructor laadt de data één keer bij de eerste aanroep.
-        static ReportRepository()
+        // De constructor (niet-statisch) wordt nu aangeroepen wanneer de DI container
+        // een nieuwe instantie van deze class aanmaakt.
+        public ReportRepository()
         {
             try
             {
+                // Let op: Dit pad is relatief aan de uitvoeringsmap (bv. bin/Debug/...)
                 string json = File.ReadAllText("Data/reports.json");
                 _reports = JsonSerializer.Deserialize<List<ReportDefinition>>(json) ?? new List<ReportDefinition>();
             }
             catch (System.Exception)
             {
-                // Fallback als het bestand niet bestaat of corrupt is
+                // Fallback als het bestand niet bestaat of corrupt is.
                 _reports = new List<ReportDefinition>();
             }
         }
 
-        public static List<ReportDefinition> GetAll() => _reports;
+        // Deze methodes zijn nu instance-methods, geen static methods meer.
+        public List<ReportDefinition> GetAll() => _reports;
 
-        public static ReportDefinition? GetByKey(string key) =>
+        public ReportDefinition? GetByKey(string key) =>
             _reports.FirstOrDefault(r => r.Key == key);
     }
 }
