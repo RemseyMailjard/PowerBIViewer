@@ -263,6 +263,7 @@ namespace PowerBIViewer.App.Views
 
         private void CreateDashboardButtons()
         {
+            // Deze methode voegt nu knoppen TOE aan de bestaande vaste knoppen.
             foreach (var report in ReportRepository.GetAll())
             {
                 var button = new Button
@@ -276,6 +277,25 @@ namespace PowerBIViewer.App.Views
                 button.Click += (s, e) => { LoadDashboardByKey((string)((Button)s).Tag); };
                 DashboardButtonPanel.Children.Add(button);
             }
+        }
+        private void CommunityButton_Click(object sender, RoutedEventArgs e)
+        {
+            // URL van de Power BI Data Stories Gallery
+            const string communityUrl = "https://community.powerbi.com/t5/Data-Stories-Gallery/bd-p/DataStoriesGallery";
+
+            // Update de statusbalk en laad het dashboard
+            _currentReportName = "Power BI Community Gallery";
+            LoadDashboard(communityUrl);
+        }
+
+        private void NovyProButton_Click(object sender, RoutedEventArgs e)
+        {
+            // URL van de NovyPro explore pagina
+            const string novyProUrl = "https://www.novypro.com/explore_projects";
+
+            // Update de statusbalk en laad het dashboard
+            _currentReportName = "NovyPro Explore";
+            LoadDashboard(novyProUrl);
         }
     }
 }

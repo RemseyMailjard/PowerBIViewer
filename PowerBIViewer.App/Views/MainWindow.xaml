@@ -12,13 +12,27 @@
     <!-- In MainWindow.xaml -->
     <DockPanel>
 
+        
         <!-- ░░ Bovenbalk: Dashboardselectie (blijft hetzelfde) ░░ -->
         <StackPanel x:Name="DashboardButtonPanel"
                 DockPanel.Dock="Top"
                 Orientation="Horizontal"
                 HorizontalAlignment="Left"
-                Margin="5" />
-        
+                Margin="5">
+
+            <!-- ✨ NIEUW: Vaste knoppen die altijd zichtbaar zijn ✨ -->
+            <Button Style="{DynamicResource SecondaryButton}"
+                Content="🏆 Power BI Community"
+                ToolTip="Bekijk dashboards uit de Power BI Data Stories Gallery"
+                Click="CommunityButton_Click"/>
+
+            <Button Style="{DynamicResource SecondaryButton}"
+                Content="💡 NovyPro"
+                ToolTip="Verken portfolio's en dashboards op NovyPro"
+                Click="NovyProButton_Click"/>
+
+        </StackPanel>
+
         <!-- ❗ GEWIJZIGD: De StatusBar is nu het onderste element in de DockPanel -->
         <!-- We geven het StatusBarItem een naam zodat we het vanuit C# kunnen aanpassen. -->
         <StatusBar DockPanel.Dock="Bottom">
