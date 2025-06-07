@@ -1,5 +1,5 @@
 # PowerBI Viewer Desktop
-
+![PowerBI Viewer Screenshot](Assets/screenshot.png)
 Een moderne WPF-desktopapplicatie voor het tonen van Power BI dashboards en widgets. Deze tool laadt rapporten dynamisch vanuit JSON-configuratiebestanden en ondersteunt toekomstige uitbreidingen via modulaire widgets.
 
 ---
