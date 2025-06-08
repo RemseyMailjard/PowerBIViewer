@@ -1,0 +1,102 @@
+﻿<!-- FILE: Views/SettingsWindow.xaml (VOLLEDIGE VERSIE) -->
+<Window x:Class="PowerBIViewer.App.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:PowerBIViewer.App.ViewModels"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel, IsDesignTimeCreatable=False}"
+        Title="Instellingen" Height="600" Width="800"
+        Background="{DynamicResource AppBackgroundBrush}"
+        Foreground="{DynamicResource AppForegroundBrush}"
+        WindowStartupLocation="CenterOwner" MinWidth="700" MinHeight="500">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TabControl Margin="10" Grid.Row="0">
+            <!-- RAPPORTEN TAB (ongewijzigd) -->
+            <TabItem Header="Rapporten">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250" MinWidth="200" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <ListBox ItemsSource="{Binding Reports}" SelectedItem="{Binding SelectedReport, Mode=TwoWay}" MinHeight="300" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextTrimming="CharacterEllipsis"><Run Text="{Binding Emoji}"/><Run Text=" "/><Run Text="{Binding Name}"/></TextBlock>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                            <Button Content="➕ Toevoegen" Command="{Binding AddReportCommand}" Margin="5" />
+                            <Button Content="➖ Verwijderen" Command="{Binding RemoveReportCommand}" Margin="5" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Column="1" Margin="15,0,0,0" VerticalScrollBarVisibility="Auto">
+                        <StackPanel DataContext="{Binding SelectedReport}">
+                            <TextBlock Text="Naam:" Margin="0,0,0,2"/>
+                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
+                            <TextBlock Text="Key (uniek):" Margin="0,0,0,2"/>
+                            <TextBox Text="{Binding Key, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
+                            <TextBlock Text="Emoji:" Margin="0,0,0,2"/>
+                            <TextBox Text="{Binding Emoji, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
+                            <TextBlock Text="URL:" Margin="0,0,0,2"/>
+                            <TextBox Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Height="80" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+
+            <!-- ✨ WIDGETS TAB (VOLLEDIG GEÏMPLEMENTEERD) ✨ -->
+            <TabItem Header="Widgets">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250" MinWidth="200" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Lijst met widgets -->
+                    <StackPanel Grid.Column="0">
+                        <ListBox ItemsSource="{Binding Widgets}" SelectedItem="{Binding SelectedWidget, Mode=TwoWay}" MinHeight="300" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextTrimming="CharacterEllipsis"><Run Text="{Binding Icon}"/><Run Text=" "/><Run Text="{Binding Title}"/></TextBlock>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                            <Button Content="➕ Toevoegen" Command="{Binding AddWidgetCommand}" Margin="5" />
+                            <Button Content="➖ Verwijderen" Command="{Binding RemoveWidgetCommand}" Margin="5" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Details van geselecteerd widget -->
+                    <ScrollViewer Grid.Column="1" Margin="15,0,0,0" VerticalScrollBarVisibility="Auto">
+                        <StackPanel DataContext="{Binding SelectedWidget}">
+                            <TextBlock Text="Titel:" Margin="0,0,0,2"/>
+                            <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
+                            <TextBlock Text="Icoon (Emoji):" Margin="0,0,0,2"/>
+                            <TextBox Text="{Binding Icon, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
+                            <TextBlock Text="URL:" Margin="0,0,0,2"/>
+                            <TextBox Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Height="80" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- Onderste knoppenbalk (ongewijzigd) -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+            <Button Content="Opslaan en Sluiten" Command="{Binding SaveCommand}" Style="{DynamicResource PrimaryButton}" Width="150" Margin="5"/>
+            <Button Content="Annuleren" IsCancel="True" Width="100" Margin="5"/>
+        </StackPanel>
+    </Grid>
+</Window>
