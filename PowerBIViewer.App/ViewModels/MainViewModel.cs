@@ -1,5 +1,9 @@
-﻿// FILE: PowerBIViewer.App/ViewModels/MainViewModel.cs
+﻿// FILE: ViewModels/MainViewModel.cs
+using Microsoft.Extensions.DependencyInjection;
 using PowerBIViewer.App.Commands;
+using PowerBIViewer.App.Models;
+using PowerBIViewer.App.Properties;
+using PowerBIViewer.App.Services;
 using PowerBIViewer.App.Views;
 using PowerBIViewerApp;
 using System;
@@ -12,10 +16,8 @@ namespace PowerBIViewer.App.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        // ✨ GEWIJZIGD: Nullable gemaakt (? toegevoegd) om de designer-constructor te ondersteunen.
         private readonly IReportRepository? _reportRepository;
 
-        // --- Event en Private Fields ---
         public event EventHandler? ScreenshotRequested;
         private bool _isDarkMode;
         private string _statusText = "Klaar";
@@ -23,8 +25,8 @@ namespace PowerBIViewer.App.ViewModels
         private bool _isLoading;
         private string? _selectedReportKey;
 
-        // --- Public Properties ---
         public ObservableCollection<ReportDefinition> Reports { get; private set; }
+        public ObservableCollection<ReportDefinition> FavoriteReports { get; private set; }
         public string StatusText { get => _statusText; set { _statusText = value; OnPropertyChanged(); } }
         public string? SelectedReportUrl { get => _selectedReportUrl; set { _selectedReportUrl = value; OnPropertyChanged(); } }
         public bool IsLoading { get => _isLoading; set { _isLoading = value; OnPropertyChanged(); } }
@@ -33,7 +35,6 @@ namespace PowerBIViewer.App.ViewModels
         public string ThemeButtonContent { get; private set; } = "🌙";
         public string ThemeButtonToolTip { get; private set; } = "Wissel naar Donker thema";
 
-        // --- Commands ---
         public ICommand LoadReportCommand { get; }
         public ICommand LoadCommunityCommand { get; }
         public ICommand LoadNovyProCommand { get; }
@@ -43,15 +44,12 @@ namespace PowerBIViewer.App.ViewModels
         public ICommand AboutCommand { get; }
         public ICommand ScreenshotCommand { get; }
         public ICommand OpenSettingsCommand { get; }
+        public ICommand ToggleFavoriteCommand { get; }
 
-        // ✨ NIEUW: Een parameterloze constructor specifiek voor de XAML Designer.
-        // Deze wordt aangeroepen door `d:DesignInstance IsDesignTimeCreatable=True` in de XAML.
         public MainViewModel()
         {
-            // Initialiseer de collectie als leeg om null-reference exceptions in de designer te voorkomen.
             Reports = new ObservableCollection<ReportDefinition>();
-
-            // Initialiseer de commands met lege acties om crashes te voorkomen.
+            FavoriteReports = new ObservableCollection<ReportDefinition>();
             LoadReportCommand = new RelayCommand(p => { });
             LoadCommunityCommand = new RelayCommand(p => { });
             LoadNovyProCommand = new RelayCommand(p => { });
@@ -61,16 +59,16 @@ namespace PowerBIViewer.App.ViewModels
             AboutCommand = new RelayCommand(p => { });
             ScreenshotCommand = new RelayCommand(p => { });
             OpenSettingsCommand = new RelayCommand(p => { });
+            ToggleFavoriteCommand = new RelayCommand(p => { });
         }
 
-        // ✨ De "echte" constructor die door de Dependency Injection container wordt gebruikt.
         public MainViewModel(IReportRepository reportRepository)
         {
             _reportRepository = reportRepository;
 
-            Reports = new ObservableCollection<ReportDefinition>(_reportRepository.GetAll() ?? Enumerable.Empty<ReportDefinition>());
+            LoadAndSetFavorites();
 
-            // Initialiseer de commands met de daadwerkelijke logica.
+            ToggleFavoriteCommand = new RelayCommand(ExecuteToggleFavorite);
             LoadReportCommand = new RelayCommand(ExecuteLoadReport);
             LoadCommunityCommand = new RelayCommand(ExecuteLoadCommunity);
             LoadNovyProCommand = new RelayCommand(ExecuteLoadNovyPro);
@@ -79,7 +77,7 @@ namespace PowerBIViewer.App.ViewModels
             OpenWidgetLauncherCommand = new RelayCommand(ExecuteOpenWidgetLauncher);
             AboutCommand = new RelayCommand(ExecuteShowAbout);
             ScreenshotCommand = new RelayCommand(p => ScreenshotRequested?.Invoke(this, EventArgs.Empty));
-            OpenSettingsCommand = new RelayCommand(p => MessageBox.Show("Instellingenvenster wordt later toegevoegd."));
+            OpenSettingsCommand = new RelayCommand(ExecuteOpenSettings);
 
             if (Reports.Any())
             {
@@ -87,12 +85,67 @@ namespace PowerBIViewer.App.ViewModels
             }
         }
 
-        // --- Execute Methods (gebruiken nu de _reportRepository instance) ---
+        private void LoadAndSetFavorites()
+        {
+            var allReports = _reportRepository!.GetAll() ?? Enumerable.Empty<ReportDefinition>();
+
+            if (Settings.Default.FavoriteReportKeys == null)
+            {
+                Settings.Default.FavoriteReportKeys = new System.Collections.Specialized.StringCollection();
+            }
+
+            foreach (var report in allReports)
+            {
+                report.IsFavorite = Settings.Default.FavoriteReportKeys.Contains(report.Key);
+            }
+
+            Reports = new ObservableCollection<ReportDefinition>(allReports);
+            FavoriteReports = new ObservableCollection<ReportDefinition>(allReports.Where(r => r.IsFavorite));
+
+            OnPropertyChanged(nameof(Reports));
+            OnPropertyChanged(nameof(FavoriteReports));
+        }
+
+        private void ExecuteToggleFavorite(object? parameter)
+        {
+            if (parameter is ReportDefinition report)
+            {
+                report.IsFavorite = !report.IsFavorite;
+
+                if (report.IsFavorite)
+                {
+                    if (!Settings.Default.FavoriteReportKeys.Contains(report.Key))
+                    {
+                        Settings.Default.FavoriteReportKeys.Add(report.Key);
+                        FavoriteReports.Add(report);
+                    }
+                }
+                else
+                {
+                    Settings.Default.FavoriteReportKeys.Remove(report.Key);
+                    FavoriteReports.Remove(report);
+                }
+
+                Settings.Default.Save();
+            }
+        }
+
+        private void ExecuteOpenSettings(object? p)
+        {
+            var settingsWindow = App.ServiceProvider?.GetService<SettingsWindow>();
+            if (settingsWindow != null)
+            {
+                settingsWindow.Owner = Application.Current.MainWindow;
+                settingsWindow.ShowDialog();
+
+                LoadAndSetFavorites();
+            }
+        }
+
         private void ExecuteLoadReport(object? parameter)
         {
             IsLoading = true;
             var key = parameter as string;
-            // De null-forgiving operator (!) is hier veilig omdat deze methode alleen wordt aangeroepen vanuit de DI-constructor.
             var report = _reportRepository!.GetByKey(key ?? string.Empty);
             if (report != null)
             {
@@ -102,7 +155,6 @@ namespace PowerBIViewer.App.ViewModels
             }
         }
 
-        // ... de rest van de methodes blijft hetzelfde ...
         private void ExecuteLoadCommunity(object? parameter)
         {
             IsLoading = true;
@@ -120,6 +172,7 @@ namespace PowerBIViewer.App.ViewModels
         }
 
         private void ExecuteToggleTheme(object? parameter) { IsDarkMode = !IsDarkMode; }
+
         private void UpdateThemeButton()
         {
             if (IsDarkMode) { ThemeButtonContent = "☀️"; ThemeButtonToolTip = "Wissel naar Licht thema"; }
@@ -127,7 +180,9 @@ namespace PowerBIViewer.App.ViewModels
             OnPropertyChanged(nameof(ThemeButtonContent));
             OnPropertyChanged(nameof(ThemeButtonToolTip));
         }
+
         private void ExecuteOpenWidgetLauncher(object? parameter) { new WidgetLauncher().Show(); }
+
         private void ExecuteShowAbout(object? parameter) { new AboutWindow().ShowDialog(); }
     }
 }

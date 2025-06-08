@@ -1,9 +1,10 @@
-﻿// FILE: PowerBIViewer.App/App.xaml.cs (MET DESIGNER-CHECK)
+﻿// FILE: PowerBIViewer.App/App.xaml.cs (CONTROLEER DEZE VERSIE)
 using Microsoft.Extensions.DependencyInjection;
+using PowerBIViewer.App.Services;
 using PowerBIViewer.App.ViewModels;
 using PowerBIViewer.App.Views;
 using System;
-using System.ComponentModel; // ✨ TOEGEVOEGD: Nodig voor DesignerProperties
+using System.ComponentModel; // Nodig voor DesignerProperties
 using System.Windows;
 
 namespace PowerBIViewer.App
@@ -14,33 +15,34 @@ namespace PowerBIViewer.App
 
         public App()
         {
-            // ✨ BELANGRIJKE CHECK: Voer de DI-configuratie NIET uit als we in de designer-modus zijn.
-            // De designer kan de complexe DI-keten niet opbouwen en crasht,
-            // waardoor hij de resources (zoals de converters) niet kan vinden.
+            // BELANGRIJKE CHECK: Als de code wordt uitgevoerd door de designer,
+            // sla dan de complexe DI-configuratie over.
             if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             {
                 return;
             }
 
-            // Deze code wordt alleen uitgevoerd wanneer de applicatie echt draait.
+            // Deze code wordt alleen uitgevoerd als de app ECHT draait.
             var services = new ServiceCollection();
             ConfigureServices(services);
             ServiceProvider = services.BuildServiceProvider();
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        private static void ConfigureServices(IServiceCollection services)
         {
-            // Deze methode blijft ongewijzigd
             services.AddSingleton<IReportRepository, ReportRepository>();
+            services.AddSingleton<IWidgetRepository>(provider => new WidgetRepository("Data/widgets.json"));
             services.AddTransient<MainViewModel>();
+            services.AddTransient<SettingsViewModel>();
             services.AddSingleton<MainWindow>();
+            services.AddTransient<SettingsWindow>();
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
-            // ✨ BELANGRIJKE CHECK: Zorg ervoor dat de ServiceProvider is aangemaakt.
+            // Veiligheidscheck voor de designer
             if (ServiceProvider == null) return;
 
             var mainWindow = ServiceProvider.GetService<MainWindow>();
