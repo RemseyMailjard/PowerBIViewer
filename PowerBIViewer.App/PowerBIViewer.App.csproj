@@ -9,6 +9,14 @@
     <ApplicationIcon>Assets\app_icon.ico</ApplicationIcon>
     <Platforms>AnyCPU;x64</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PackageId>P12</PackageId>
+    <Title>Power BI Viewer</Title>
+    <Version>1.0.0</Version>
+    <Authors>Remsey Mailjard</Authors>
+    <Company>Skills4-IT.nl</Company>
+    <Product>Power BI Viewer</Product>
+    <Description>Een moderne WPF-desktopapplicatie voor het tonen en beheren van Power BI dashboards en widgets.</Description>
+    <Copyright>Copyright © Remsey Mailjard 2025</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

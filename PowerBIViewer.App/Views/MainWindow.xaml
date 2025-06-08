@@ -17,6 +17,8 @@
 
     <Window.Resources>
         <Style x:Key="DashboardButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+            <!-- ✨ Tooltip toegevoegd die de volledige naam van het rapport toont -->
+            <Setter Property="ToolTip" Value="{Binding Name}" />
             <Style.Triggers>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
@@ -39,35 +41,37 @@
 
     <DockPanel>
         <!-- Bovenbalk: Vaste knoppen en dynamische rapportknoppen -->
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5,5,5,0">
-            <Button Style="{DynamicResource SecondaryButton}" 
-                    Content="🏆 Power BI Community" 
-                    ToolTip="Bekijk dashboards uit de Power BI Data Stories Gallery" 
-                    Command="{Binding LoadCommunityCommand}"/>
-            <Button Style="{DynamicResource SecondaryButton}" 
-                    Content="💡 NovyPro" 
-                    ToolTip="Verken portfolio's en dashboards op NovyPro" 
-                    Command="{Binding LoadNovyProCommand}"/>
+        <ScrollViewer DockPanel.Dock="Top" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+            <StackPanel Orientation="Horizontal" Margin="5,5,5,0">
+                <Button Style="{DynamicResource SecondaryButton}" 
+                        Content="🏆 Power BI Community" 
+                        ToolTip="Bekijk dashboards uit de Power BI Data Stories Gallery" 
+                        Command="{Binding LoadCommunityCommand}"/>
+                <Button Style="{DynamicResource SecondaryButton}" 
+                        Content="💡 NovyPro" 
+                        ToolTip="Verken portfolio's en dashboards op NovyPro" 
+                        Command="{Binding LoadNovyProCommand}"/>
 
-            <ItemsControl ItemsSource="{Binding Reports}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Button Style="{StaticResource DashboardButton}"
-                                Command="{Binding DataContext.LoadReportCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                CommandParameter="{Binding Key}">
-                            <TextBlock>
-                                <Run Text="{Binding Emoji}"/> <Run Text="{Binding Name}"/>
-                            </TextBlock>
-                        </Button>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </StackPanel>
+                <ItemsControl ItemsSource="{Binding Reports}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource DashboardButton}"
+                                    Command="{Binding DataContext.LoadReportCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding Key}">
+                                <TextBlock TextTrimming="CharacterEllipsis">
+                                    <Run Text="{Binding Emoji}"/><Run Text=" "/><Run Text="{Binding Name}"/>
+                                </TextBlock>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
 
         <!-- Statusbalk -->
         <StatusBar DockPanel.Dock="Bottom">
@@ -85,15 +89,14 @@
                         Content="{Binding ThemeButtonContent}" 
                         ToolTip="{Binding ThemeButtonToolTip}" 
                         Command="{Binding ToggleThemeCommand}"/>
-                <Button Style="{DynamicResource SecondaryButton}" Content="🔄 Refresh" Click="Refresh_Click"/>
+
+                <!-- ✨ Tooltips toegevoegd aan alle actieknoppen -->
+                <Button Style="{DynamicResource SecondaryButton}" Content="🔄 Refresh" ToolTip="Herlaad het huidige rapport (F5)" Click="Refresh_Click"/>
                 <Button x:Name="FullScreenButton" Style="{DynamicResource SecondaryButton}" Content="⛶" ToolTip="Volledig scherm (F11)" Click="ToggleFullScreen_Click"/>
-
-                <!-- ✨ GECORRIGEERD: Syntaxfout in de binding gecorrigeerd -->
-                <Button Style="{DynamicResource SecondaryButton}" Content="📸 Screenshot" Command="{Binding ScreenshotCommand}"/>
-
-                <Button Style="{DynamicResource SecondaryButton}" Content="⚙️ Instellingen" Command="{Binding OpenSettingsCommand}"/>
-                <Button Style="{DynamicResource SecondaryButton}" Content="ℹ️ Over" Command="{Binding AboutCommand}"/>
-                <Button Style="{DynamicResource PrimaryButton}" Content="🧩 Widget Launcher" Command="{Binding OpenWidgetLauncherCommand}"/>
+                <Button Style="{DynamicResource SecondaryButton}" Content="📸 Screenshot" ToolTip="Maak een screenshot van het huidige rapport" Command="{Binding ScreenshotCommand}"/>
+                <Button Style="{DynamicResource SecondaryButton}" Content="⚙️ Instellingen" ToolTip="Beheer rapporten en widgets" Command="{Binding OpenSettingsCommand}"/>
+                <Button Style="{DynamicResource SecondaryButton}" Content="ℹ️ Over" ToolTip="Toon informatie over deze applicatie" Command="{Binding AboutCommand}"/>
+                <Button Style="{DynamicResource PrimaryButton}" Content="🧩 Widget Launcher" ToolTip="Open een klein rapport in een apart venster" Command="{Binding OpenWidgetLauncherCommand}"/>
             </StackPanel>
         </Border>
 
