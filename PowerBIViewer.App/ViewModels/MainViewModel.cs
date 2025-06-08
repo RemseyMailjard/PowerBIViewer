@@ -192,7 +192,8 @@ namespace PowerBIViewer.App.ViewModels
 
         private void ExecuteOpenWidgetLauncher(object? parameter)
         {
-            new WidgetLauncher().Show();
+            var launcher = App.ServiceProvider?.GetService<WidgetLauncher>();
+            launcher?.Show();
         }
 
         private void ExecuteShowAbout(object? parameter)

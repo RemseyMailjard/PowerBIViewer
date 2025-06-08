@@ -1,5 +1,8 @@
-﻿using Microsoft.Web.WebView2.Core;
+﻿// FILE: Views/WidgetViewerWindow.xaml.cs
+using Microsoft.Web.WebView2.Core;
+using PowerBIViewer.App.Helpers; // ✨ TOEGEVOEGD
 using System;
+using System.Linq;               // ✨ TOEGEVOEGD
 using System.Windows;
 
 namespace PowerBIViewerApp
@@ -10,8 +13,23 @@ namespace PowerBIViewerApp
 
         public WidgetViewerWindow(string widgetUrl)
         {
-            InitializeComponent(); // 🔧 Zorgt dat de XAML gekoppeld wordt aan deze class
+            InitializeComponent();
             _widgetUrl = widgetUrl;
+
+            // ✨ NIEUW: Roep de methode aan om de titelbalk correct in te stellen
+            // zodra het venster wordt aangemaakt.
+            ApplyTitleBarTheme();
+        }
+
+        // ✨ NIEUW: Helper-methode om het thema van de titelbalk te bepalen en toe te passen.
+        private void ApplyTitleBarTheme()
+        {
+            // Zoek in de applicatie-resources of het DarkMode.xaml bestand is geladen.
+            bool isDarkMode = Application.Current.Resources.MergedDictionaries
+                .Any(d => d.Source != null && d.Source.OriginalString.Contains("DarkMode.xaml"));
+
+            // Gebruik de DwmApiHelper om de kleur van de titelbalk aan te passen.
+            DwmApiHelper.SetTitleBarTheme(this, isDarkMode);
         }
 
         private async void WidgetViewerWindow_Loaded(object sender, RoutedEventArgs e)
@@ -33,41 +51,34 @@ namespace PowerBIViewerApp
             }
         }
 
+        // ✨ GEWIJZIGD: 'sender' is nu 'object?' om nullable-waarschuwingen te voorkomen.
         private async void WebView_NavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e)
         {
             string js = @"
-(() => {
-    // Probeer iframe te vinden
-    const iframe = document.querySelector('iframe');
-    if (iframe) {
-        iframe.style.width = '100vw';
-        iframe.style.height = '100vh';
-        iframe.style.border = 'none';
-
-        // Zoek mogelijke containers en zet overflow/visibility uit
-        const parent = iframe.parentElement;
-        if (parent) {
-            parent.style.margin = '0';
-            parent.style.padding = '0';
-            parent.style.overflow = 'hidden';
-        }
-
-        // Simuleer fullscreen: viewport-resize
-        setTimeout(() => {
-            window.dispatchEvent(new Event('resize'));
-            document.body.style.margin = '0';
-            document.body.style.padding = '0';
-            document.body.style.overflow = 'hidden';
-        }, 600);
-
-        // Fallback: probeer nogmaals na 2 seconden
-        setTimeout(() => {
-            iframe.style.height = '100vh';
-            window.dispatchEvent(new Event('resize'));
-        }, 2000);
-    }
-})();
-";
+            (() => {
+                const iframe = document.querySelector('iframe');
+                if (iframe) {
+                    iframe.style.width = '100vw';
+                    iframe.style.height = '100vh';
+                    iframe.style.border = 'none';
+                    const parent = iframe.parentElement;
+                    if (parent) {
+                        parent.style.margin = '0';
+                        parent.style.padding = '0';
+                        parent.style.overflow = 'hidden';
+                    }
+                    setTimeout(() => {
+                        window.dispatchEvent(new Event('resize'));
+                        document.body.style.margin = '0';
+                        document.body.style.padding = '0';
+                        document.body.style.overflow = 'hidden';
+                    }, 600);
+                    setTimeout(() => {
+                        iframe.style.height = '100vh';
+                        window.dispatchEvent(new Event('resize'));
+                    }, 2000);
+                }
+            })();";
             try
             {
                 await WidgetWebView.CoreWebView2.ExecuteScriptAsync(js);

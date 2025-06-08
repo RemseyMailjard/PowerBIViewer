@@ -1,91 +1,105 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿// FILE: Views/WidgetLauncher.xaml.cs
+using Microsoft.Extensions.DependencyInjection;
+using PowerBIViewer.App;
+using PowerBIViewer.App.Helpers;
+using PowerBIViewer.App.ViewModels;
+using PowerBIViewer.App.Views;
+using System; // ✨ TOEGEVOEGD
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using PowerBIViewer.App;
-using PowerBIViewer.App.Models;
-using PowerBIViewer.App.Services;
 
 namespace PowerBIViewerApp
 {
     public partial class WidgetLauncher : Window
     {
-        private List<Widget> _widgets;
+        // ✨ NIEUW: Variabele om de huidige themastatus bij te houden.
+        private bool _isDarkMode;
 
-        public WidgetLauncher()
+        public WidgetLauncher(WidgetLauncherViewModel viewModel)
         {
             InitializeComponent();
-            LoadWidgetsFromRepository();
-        }
+            this.DataContext = viewModel;
 
-        private void LoadWidgetsFromRepository()
-        {
-            string jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "widgets.json");
-            var repository = new WidgetRepository(jsonPath);
-            _widgets = repository.LoadWidgets();
-            WidgetListBox.ItemsSource = _widgets;
+            // Bepaal de initiële modus en pas de titelbalk en knop aan.
+            _isDarkMode = IsDarkModeActive();
+            DwmApiHelper.SetTitleBarTheme(this, _isDarkMode);
+            UpdateThemeButtonContent();
         }
 
         private void WidgetListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            // Check of er echt op een item is geklikt
-            if (GetItemUnderMouse(WidgetListBox, e) is Widget selectedWidget)
+            if (DataContext is WidgetLauncherViewModel vm && ListBox.SelectedItem != null)
             {
-                OpenWidgetWindow(selectedWidget.Url);
+                if (vm.OpenOnDoubleClickCommand.CanExecute(ListBox.SelectedItem))
+                {
+                    vm.OpenOnDoubleClickCommand.Execute(ListBox.SelectedItem);
+                }
             }
         }
 
-        private void OpenSelectedWidget_Click(object sender, RoutedEventArgs e)
+        private void OpenSettings_Click(object sender, RoutedEventArgs e)
         {
-            string widgetUrl = null;
-
-            string customUrl = CustomWidgetUrlTextBox.Text?.Trim();
-            if (!string.IsNullOrEmpty(customUrl) && Uri.IsWellFormedUriString(customUrl, UriKind.Absolute))
+            var settingsWindow = App.ServiceProvider?.GetService<SettingsWindow>();
+            if (settingsWindow != null)
             {
-                widgetUrl = customUrl;
+                settingsWindow.Owner = this;
+                settingsWindow.ShowDialog();
             }
-            else if (WidgetListBox.SelectedItem is Widget selectedWidget)
-            {
-                widgetUrl = selectedWidget.Url;
-            }
+        }
 
-            if (!string.IsNullOrEmpty(widgetUrl))
+        // ✨ NIEUW: De volledige logica voor het wisselen van thema.
+        private void ToggleTheme_Click(object sender, RoutedEventArgs e)
+        {
+            try
             {
-                OpenWidgetWindow(widgetUrl);
+                _isDarkMode = !_isDarkMode;
+
+                // Pas titelbalk aan
+                DwmApiHelper.SetTitleBarTheme(this, _isDarkMode);
+
+                // Verwijder oud thema uit de applicatie-resources
+                var existingTheme = Application.Current.Resources.MergedDictionaries
+                    .FirstOrDefault(d => d.Source != null && d.Source.OriginalString.Contains("Mode.xaml"));
+                if (existingTheme != null)
+                {
+                    Application.Current.Resources.MergedDictionaries.Remove(existingTheme);
+                }
+
+                // Voeg nieuw thema toe
+                string newThemeFileName = _isDarkMode ? "Themes/DarkMode.xaml" : "Themes/LightMode.xaml";
+                var newTheme = new ResourceDictionary { Source = new Uri(newThemeFileName, UriKind.Relative) };
+                Application.Current.Resources.MergedDictionaries.Add(newTheme);
+
+                // Update de knop-icoon/tooltip
+                UpdateThemeButtonContent();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fout bij het wisselen van thema:\n{ex.Message}", "Thema Fout", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // ✨ NIEUW: Helper-methode om de knop-content bij te werken.
+        private void UpdateThemeButtonContent()
+        {
+            if (_isDarkMode)
+            {
+                ThemeToggleButton.Content = "☀️";
+                ThemeToggleButton.ToolTip = "Wissel naar Licht thema";
             }
             else
             {
-                MessageBox.Show("Selecteer een widget of voer een geldige URL in.", "Let op", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ThemeToggleButton.Content = "🌓";
+                ThemeToggleButton.ToolTip = "Wissel naar Donker thema";
             }
         }
 
-        private void OpenWidgetWindow(string url)
+        // ✨ NIEUW: Helper-methode om de actieve modus te detecteren.
+        private bool IsDarkModeActive()
         {
-            var viewer = new WidgetViewerWindow(url)
-            {
-                Owner = this,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
-            };
-
-            viewer.Show(); // Laat de launcher gewoon open
-        }
-
-        private void WidgetListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (WidgetListBox.SelectedItem != null)
-            {
-                CustomWidgetUrlTextBox.Text = string.Empty;
-            }
-        }
-
-        private static object? GetItemUnderMouse(ListBox listBox, MouseButtonEventArgs e)
-        {
-            var point = e.GetPosition(listBox);
-            var element = listBox.InputHitTest(point) as FrameworkElement;
-            return element?.DataContext is Widget widget ? widget : null;
+            return Application.Current.Resources.MergedDictionaries
+                .Any(d => d.Source != null && d.Source.OriginalString.Contains("DarkMode.xaml"));
         }
     }
 }
