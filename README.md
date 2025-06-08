@@ -1,6 +1,7 @@
 # PowerBI Viewer Desktop
 
-![Power BI Viewer Screenshot](Assets/screenshot.png)
+![Power BI Viewer Screenshot](PowerBIViewer.App/Assets/screenshot.png)
+
 
 **Een moderne, configureerbare WPF-desktopapplicatie voor het tonen en beheren van Power BI dashboards en widgets.**  
 Gebouwd op een robuuste en schaalbare architectuur — ideaal voor zowel persoonlijk gebruik als teams die een centrale, aanpasbare viewer nodig hebben.
