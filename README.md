@@ -24,6 +24,7 @@ Gebouwd op een robuuste en schaalbare architectuur — ideaal voor zowel persoon
 
 - 🧱 **Robuuste Architectuur**  
   Op basis van MVVM en Dependency Injection voor schaalbaarheid en onderhoudbaarheid.
+![Power BI Viewer Demo](PowerBIViewer.App/Assets/PowerBIViewer.gif)
 
 ---
 
