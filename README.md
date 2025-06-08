@@ -1,48 +1,72 @@
 # PowerBI Viewer Desktop
-![PowerBI Viewer Screenshot](Assets/screenshot.png)
-Een moderne WPF-desktopapplicatie voor het tonen van Power BI dashboards en widgets. Deze tool laadt rapporten dynamisch vanuit JSON-configuratiebestanden en ondersteunt toekomstige uitbreidingen via modulaire widgets.
+
+![Power BI Viewer Screenshot](Assets/screenshot.png)
+
+**Een moderne, configureerbare WPF-desktopapplicatie voor het tonen en beheren van Power BI dashboards en widgets.**  
+Gebouwd op een robuuste en schaalbare architectuur — ideaal voor zowel persoonlijk gebruik als teams die een centrale, aanpasbare viewer nodig hebben.
 
 ---
 
 ## ✨ Features
-
-- 🚀 **Lichtgewicht & responsieve WPF UI**
-- 🧩 **Dynamische dashboards**  
-  Genereert automatisch navigatieknoppen vanuit `reports.json`. Voeg eenvoudig nieuwe dashboards toe zonder te programmeren.
+- 🚀 **Moderne & Responsieve UI**  
+  Gebouwd met .NET 8 en WPF voor een vloeiende, snelle gebruikerservaring.
+- ⚙️ **Volledig Beheer via de UI**  
+  Voeg, bewerk en verwijder rapporten en widgets direct vanuit het instellingenvenster. Handmatige JSON-aanpassing is verleden tijd.
+- ⭐ **Favorieten Systeem**  
+  Markeer je belangrijkste rapporten met een ster en krijg er snel toegang toe via een aparte favorietenlijst. Voorkeuren worden onthouden.
 - 📊 **Naadloze Power BI-integratie**  
-  Gebruikt de Microsoft Edge WebView2-engine om interactieve Power BI-rapporten weer te geven, net als in je browser.
-- 🌓 **Light & Dark Theme**  
-  Wissel met één klik tussen licht- en donker thema. De UI past zich realtime aan.
-- 🗂️ **Modulaire Widget Launcher**  
-  Open kleine, specifieke rapporten ("widgets") in aparte vensters – ideaal voor focus en multitasking.
-- 📁 **Flexibele architectuur**  
-  Duidelijke scheiding tussen Views (UI), Services (logica) en Models (data) voor eenvoudige extensie.
+  Gebruikt Microsoft Edge WebView2 om interactieve Power BI-rapporten perfect te renderen.
+- 🌓 **Light & Dark Mode**  
+  Wissel met één klik tussen licht en donker. De complete UI, inclusief titelbalk, past zich realtime aan.
+- 🖼️ **Ingebouwde Tools**  
+  Maak screenshots, gebruik fullscreen-presentaties of open rapporten als losse "widgets" voor multitasking.
+
+- 🧱 **Robuuste Architectuur**  
+  Op basis van MVVM en Dependency Injection voor schaalbaarheid en onderhoudbaarheid.
 
 ---
 
-## 🛠️ Technische Stack
+## 🛠️ Technische Specificaties
 
-Voor de tech-liefhebbers onder ons:
+**Framework:** WPF op .NET 8
 
-- **Framework**: WPF met .NET 8  
-- **Rendering Engine**: Microsoft Edge WebView2  
-- **Architectuur**: MV-structured (Views, Services, Models)  
-- **Styling**: Dynamisch themasysteem via `DynamicResource` en `ResourceDictionary`-bestanden  
-- **Configuratie**: Externe JSON-bestanden voor dashboards en widgets (`reports.json`, `widgets.json`)
+**Architectuur:**
+
+- **MVVM (Model-View-ViewModel):** Scheiding van UI, logica en data voor maximale testbaarheid.
+- **Dependency Injection:** Gebruik van `Microsoft.Extensions.DependencyInjection`.
+- **Repository Pattern:** Centrale toegang tot rapport- en widgetdata.
+- **Styling:** Dynamische thema's via `ResourceDictionary` en `DynamicResource`.
+
+**Rendering Engine:** Microsoft Edge WebView2
+
+**Data-opslag:**
+
+- `reports.json` en `widgets.json` voor configuratie
+- Gebruikersinstellingen opgeslagen via `Properties.Settings`
+- Validatie via `IDataErrorInfo` in instellingenvenster
 
 ---
 
 ## 🏁 Getting Started
 
-1. Clone deze repository.
-2. Open het `.sln`-bestand in Visual Studio 2022 of later.
-3. Installeer de WebView2 Runtime (vaak al aanwezig in moderne Windows-versies).
-4. Druk op `F5` om de app te bouwen en uit te voeren.
-5. Pas `reports.json` en `widgets.json` aan om je eigen Power BI-rapporten te laden.
+1. Clone deze repository naar je lokale machine.
+2. Open het `.sln`-bestand in Visual Studio 2022 of nieuwer.
+3. Zorg ervoor dat de **WebView2 Runtime** is geïnstalleerd.
+4. Druk op `F5` om de applicatie te bouwen en starten.
+5. Bij de eerste keer opstarten wordt de standaard `reports.json` en `widgets.json` geladen. Je kunt deze wijzigen via de ⚙️ **Instellingen** knop.
 
 ---
 
 ## 👤 Auteur
 
-Gemaakt door [Remsey Mailjard](https://www.remsey.nl)  
-Voor trainingsdoeleinden, demo’s en intern gebruik.
+Gemaakt door **Remsey Mailjard**
+
+Dit project is een voorbeeld van moderne WPF-ontwikkeling met focus op:
+- Best practices
+- Heldere architectuur
+- Uitstekende gebruikerservaring
+
+---
+
+> 📣 *Contributies, issues en sterren zijn van harte welkom!*
+
