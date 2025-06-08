@@ -25,12 +25,19 @@ namespace PowerBIViewer.App.ViewModels
         private bool _isLoading;
         private string? _selectedReportKey;
 
-        public ObservableCollection<ReportDefinition> Reports { get; private set; }
-        public ObservableCollection<ReportDefinition> FavoriteReports { get; private set; }
+        public ObservableCollection<ReportDefinition> Reports { get; private set; } = [];
+        public ObservableCollection<ReportDefinition> FavoriteReports { get; private set; } = [];
+
         public string StatusText { get => _statusText; set { _statusText = value; OnPropertyChanged(); } }
         public string? SelectedReportUrl { get => _selectedReportUrl; set { _selectedReportUrl = value; OnPropertyChanged(); } }
         public bool IsLoading { get => _isLoading; set { _isLoading = value; OnPropertyChanged(); } }
-        public bool IsDarkMode { get => _isDarkMode; set { _isDarkMode = value; OnPropertyChanged(); UpdateThemeButton(); } }
+
+        public bool IsDarkMode
+        {
+            get => _isDarkMode;
+            set { _isDarkMode = value; OnPropertyChanged(); UpdateThemeButton(); }
+        }
+
         public string? SelectedReportKey { get => _selectedReportKey; set { _selectedReportKey = value; OnPropertyChanged(); } }
         public string ThemeButtonContent { get; private set; } = "🌙";
         public string ThemeButtonToolTip { get; private set; } = "Wissel naar Donker thema";
@@ -48,8 +55,6 @@ namespace PowerBIViewer.App.ViewModels
 
         public MainViewModel()
         {
-            Reports = new ObservableCollection<ReportDefinition>();
-            FavoriteReports = new ObservableCollection<ReportDefinition>();
             LoadReportCommand = new RelayCommand(p => { });
             LoadCommunityCommand = new RelayCommand(p => { });
             LoadNovyProCommand = new RelayCommand(p => { });
@@ -65,14 +70,13 @@ namespace PowerBIViewer.App.ViewModels
         public MainViewModel(IReportRepository reportRepository)
         {
             _reportRepository = reportRepository;
-
             LoadAndSetFavorites();
 
             ToggleFavoriteCommand = new RelayCommand(ExecuteToggleFavorite);
             LoadReportCommand = new RelayCommand(ExecuteLoadReport);
             LoadCommunityCommand = new RelayCommand(ExecuteLoadCommunity);
             LoadNovyProCommand = new RelayCommand(ExecuteLoadNovyPro);
-            ToggleThemeCommand = new RelayCommand(ExecuteToggleTheme);
+            ToggleThemeCommand = new RelayCommand(p => IsDarkMode = !IsDarkMode);
             RefreshCommand = new RelayCommand(p => { /* Handled in View */ });
             OpenWidgetLauncherCommand = new RelayCommand(ExecuteOpenWidgetLauncher);
             AboutCommand = new RelayCommand(ExecuteShowAbout);
@@ -91,7 +95,7 @@ namespace PowerBIViewer.App.ViewModels
 
             if (Settings.Default.FavoriteReportKeys == null)
             {
-                Settings.Default.FavoriteReportKeys = new System.Collections.Specialized.StringCollection();
+                Settings.Default.FavoriteReportKeys = [];
             }
 
             foreach (var report in allReports)
@@ -99,8 +103,8 @@ namespace PowerBIViewer.App.ViewModels
                 report.IsFavorite = Settings.Default.FavoriteReportKeys.Contains(report.Key);
             }
 
-            Reports = new ObservableCollection<ReportDefinition>(allReports);
-            FavoriteReports = new ObservableCollection<ReportDefinition>(allReports.Where(r => r.IsFavorite));
+            Reports = new(allReports);
+            FavoriteReports = new(allReports.Where(r => r.IsFavorite));
 
             OnPropertyChanged(nameof(Reports));
             OnPropertyChanged(nameof(FavoriteReports));
@@ -137,7 +141,6 @@ namespace PowerBIViewer.App.ViewModels
             {
                 settingsWindow.Owner = Application.Current.MainWindow;
                 settingsWindow.ShowDialog();
-
                 LoadAndSetFavorites();
             }
         }
@@ -167,22 +170,34 @@ namespace PowerBIViewer.App.ViewModels
         {
             IsLoading = true;
             StatusText = "Rapport 'NovyPro Explore' wordt geladen...";
-            SelectedReportUrl = "https://www.novypro.com/explore_projects";
+            SelectedReportUrl = "https://www.novypro.com/";
             SelectedReportKey = null;
         }
 
-        private void ExecuteToggleTheme(object? parameter) { IsDarkMode = !IsDarkMode; }
-
         private void UpdateThemeButton()
         {
-            if (IsDarkMode) { ThemeButtonContent = "☀️"; ThemeButtonToolTip = "Wissel naar Licht thema"; }
-            else { ThemeButtonContent = "🌙"; ThemeButtonToolTip = "Wissel naar Donker thema"; }
+            if (IsDarkMode)
+            {
+                ThemeButtonContent = "☀️";
+                ThemeButtonToolTip = "Wissel naar Licht thema";
+            }
+            else
+            {
+                ThemeButtonContent = "🌙";
+                ThemeButtonToolTip = "Wissel naar Donker thema";
+            }
             OnPropertyChanged(nameof(ThemeButtonContent));
             OnPropertyChanged(nameof(ThemeButtonToolTip));
         }
 
-        private void ExecuteOpenWidgetLauncher(object? parameter) { new WidgetLauncher().Show(); }
+        private void ExecuteOpenWidgetLauncher(object? parameter)
+        {
+            new WidgetLauncher().Show();
+        }
 
-        private void ExecuteShowAbout(object? parameter) { new AboutWindow().ShowDialog(); }
+        private void ExecuteShowAbout(object? parameter)
+        {
+            new AboutWindow().ShowDialog();
+        }
     }
 }

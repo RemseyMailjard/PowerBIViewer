@@ -1,13 +1,13 @@
-﻿// FILE: PowerBIViewer.App/Views/MainWindow.xaml.cs (CORRECTE, SCHONE VERSIE)
+﻿// FILE: PowerBIViewer.App/Views/MainWindow.xaml.cs
 using Microsoft.Web.WebView2.Core;
 using PowerBIViewer.App.Helpers;
 using PowerBIViewer.App.ViewModels;
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using System.IO;
 
 namespace PowerBIViewer.App.Views
 {
@@ -85,7 +85,8 @@ namespace PowerBIViewer.App.Views
             Application.Current.Resources.MergedDictionaries.Add(newTheme);
         }
 
-        private void PowerBIWebView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        // ✨ GEWIJZIGD: 'sender' is nu 'object?' om overeen te komen met het event.
+        private void PowerBIWebView_NavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e)
         {
             _viewModel.IsLoading = false;
             if (e.IsSuccess && PowerBIWebView.Source != null)
@@ -107,7 +108,8 @@ namespace PowerBIViewer.App.Views
             }
         }
 
-        private void MainWindow_Closing(object sender, CancelEventArgs e)
+        // ✨ GEWIJZIGD: 'sender' is nu 'object?' om overeen te komen met het event.
+        private void MainWindow_Closing(object? sender, CancelEventArgs e)
         {
             if (this.WindowState == WindowState.Maximized)
             {
