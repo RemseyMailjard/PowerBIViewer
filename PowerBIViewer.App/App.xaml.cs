@@ -28,7 +28,7 @@ namespace PowerBIViewer.App
             ServiceProvider = services.BuildServiceProvider();
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        private static void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IReportRepository, ReportRepository>();
             services.AddSingleton<IWidgetRepository>(provider => new WidgetRepository("Data/widgets.json"));
